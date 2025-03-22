@@ -91,7 +91,7 @@ async def check_new_games():
 async def start_auto_checking():
     while True:
         await check_new_games()
-        await asyncio.sleep(120)
+        await asyncio.sleep(30)
 
 # Khởi chạy chương trình
 if __name__ == "__main__":
