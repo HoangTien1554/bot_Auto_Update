@@ -77,7 +77,7 @@ async def check_new_games():
 
     if new_entries:
         for game in new_entries:
-            message = f"📢 Game mới cập nhật:\n🎮 Game: {game.column_2}\n📦 Kích thước: {game.column_3}\n📅 Ngày: {game.column_4}\n🔄 Trạng thái: {game.column_5}"
+            message = f"📢 Game Online mới cập nhật:\n🎮 Game: {game.column_2}\n📦 Kích thước: {game.column_3}\n📅 Ngày: {game.column_4}\n🔄 Trạng thái: {game.column_5}"
             await send_message(message)
             await asyncio.sleep(2)
 
