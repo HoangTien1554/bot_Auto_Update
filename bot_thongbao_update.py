@@ -8,20 +8,6 @@ from threading import Thread
 from telegram import Bot
 import time
 
-# Flask app để giữ kết nối mở
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Server is running!"
-
-def run_flask():
-    app.run(host='0.0.0.0', port=8080)
-
-# Chạy Flask trên một luồng riêng
-flask_thread = Thread(target=run_flask, daemon=True)
-flask_thread.start()
-
 # Cấu hình bot Telegram
 BOT_TOKEN = "8081288489:AAFnPeJPX2Sww3VlZwOnrZW8GfCcVzVJoGA"
 CHAT_ID = "-1002671656846"
@@ -35,7 +21,17 @@ class Game:
     column_4: str  # Ngày cập nhật
     column_5: str  # Trạng thái
 
-# Hàm lấy danh sách game mới từ trang web
+# Flask app để giữ server hoạt động
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Server is running!"
+
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+
+# Hàm lấy danh sách game từ trang web
 def get_game_list():
     r = requests.get(URL)
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -93,18 +89,11 @@ async def start_auto_checking():
         await check_new_games()
         await asyncio.sleep(30)
 
-# Khởi chạy chương trình
+# Chạy Flask trên một tiến trình riêng
 if __name__ == "__main__":
     # Chạy Flask trên một luồng riêng
-    Thread(target=run_flask, daemon=True).start()
+    flask_thread = Thread(target=run_flask, daemon=True)
+    flask_thread.start()
 
-    # Tạo một event loop mới cho asyncio
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    # Chạy vòng lặp kiểm tra game trên một luồng riêng biệt
-    Thread(target=lambda: loop.run_until_complete(start_auto_checking()), daemon=True).start()
-
-    # Giữ chương trình chạy liên tục
-    while True:
-        time.sleep(1)
+    # Chạy bot kiểm tra game
+    asyncio.run(start_auto_checking())
